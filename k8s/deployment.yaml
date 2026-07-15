@@ -18,24 +18,26 @@ spec:
       containers:
         - name: score-demo
           # Update this with your actual ECR repository URI
-          image: <YOUR_AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/score-demo-repo:latest
+          image: 801390778330.dkr.ecr.us-east-2.amazonaws.com/score-demo-repo:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
-            # Inject Kafka Configuration here. These should ideally come from Secrets/ConfigMaps
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "your-kafka-broker:9092"
-            # - name: KAFKA_USERNAME
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: kafka-credentials
-            #       key: username
-            # - name: KAFKA_PASSWORD
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: kafka-credentials
-            #       key: password
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: KAFKA_BOOTSTRAP_SERVERS
+            - name: KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: KAFKA_USERNAME
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-credentials
+                  key: KAFKA_PASSWORD
           resources:
             requests:
               memory: "512Mi"

@@ -1,13 +1,15 @@
 spring:
+  application:
+    name: score-demo
   kafka:
-    bootstrap-servers: pkc-oxqxx9.us-east-1.aws.confluent.cloud:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: PLAIN
-      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="QNBVJUMU7C7U5OMY" password="cfltfeA1PDCKEinykxYIl24p0Xnng3lBZs3Dwf2eGVI9JJQDyBpiw2oyh8HrZQwQ";
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
 
 app:
   kafka:
