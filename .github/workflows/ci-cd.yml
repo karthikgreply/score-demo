@@ -14,7 +14,6 @@ permissions:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: score-demo-repo
-  # E.g., arn:aws:iam::123456789012:role/github-actions-role
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }} 
 
 jobs:
@@ -31,6 +30,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.7'
 
     - name: Add execute permission to gradlew
       run: chmod +x ./gradlew
