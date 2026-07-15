@@ -26,7 +26,7 @@ public class ScorecardRequestEventPublisher {
         SenderRecord<String, Object, String> senderRecord = SenderRecord.create(producerRecord, event.getEventId());
 
         return kafkaSender.send(Mono.just(senderRecord))
-                .doOnNext(result -> log.info("Successfully published event ID {} to topic {} at offset {}",
+                .doOnNext(result -> log.info(":::Successfully published event ID {} to topic {} at offset {}",
                         result.correlationMetadata(),
                         result.recordMetadata().topic(),
                         result.recordMetadata().offset()))
