@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: score-demo
+  namespace: default
+  labels:
+    app: score-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: score-demo
+  template:
+    metadata:
+      labels:
+        app: score-demo
+    spec:
+      containers:
+        - name: score-demo
+          # Update this with your actual ECR repository URI
+          image: <YOUR_AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/score-demo-repo:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            # Inject Kafka Configuration here. These should ideally come from Secrets/ConfigMaps
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "your-kafka-broker:9092"
+            # - name: KAFKA_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: kafka-credentials
+            #       key: username
+            # - name: KAFKA_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: kafka-credentials
+            #       key: password
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
