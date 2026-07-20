@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
+import reactor.kafka.sender.SenderResult;
 
 @Slf4j
 @Component
@@ -19,18 +20,18 @@ public class ScorecardRequestEventPublisher {
     @Value("${app.kafka.topic.scorecard-request}")
     private String topicName;
 
-    public Mono<Void> publish(ScorecardRequestEvent event) {
+    public Mono<SenderResult<String>> publish(ScorecardRequestEvent event) {
         String key = event.getCustomerId(); // Use customerId as routing key
 
         ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(topicName, key, event);
         SenderRecord<String, Object, String> senderRecord = SenderRecord.create(producerRecord, event.getEventId());
 
         return kafkaSender.send(Mono.just(senderRecord))
-                .doOnNext(result -> log.info("::::Successfully published event ID {} to topic {} at offset {}",
+                .doOnNext(result -> log.info("Successfully published event ID {} to topic {} at offset {}",
                         result.correlationMetadata(),
                         result.recordMetadata().topic(),
                         result.recordMetadata().offset()))
                 .doOnError(error -> log.error("Error publishing event ID {}", event.getEventId(), error))
-                .then();
+                .next(); // Use next() to get the single result from the flux
     }
 }

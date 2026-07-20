@@ -14,7 +14,6 @@ permissions:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: score-demo-repo
-  # E.g., arn:aws:iam::123456789012:role/github-actions-role
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }} 
 
 jobs:
